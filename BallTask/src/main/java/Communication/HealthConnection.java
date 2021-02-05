@@ -1,6 +1,6 @@
 package Communication;
 
-public class HealthChannel implements Runnable {
+public class HealthConnection implements Runnable {
     @Override
     public void run() {
 

@@ -11,7 +11,7 @@ import java.net.Socket;
 //setSoTimeout(ms)
 public class Server implements Runnable {
 
-    private int port;
+    private int port=8082;
     private ControlPanel controlPanel;
     private IdentifyConnection identifyConnection;
     private Thread serverThread;
@@ -69,7 +69,7 @@ public class Server implements Runnable {
     public void run() {
         while (true) {
             try {
-                this.port = Integer.parseInt(this.controlPanel.getPort().getText());
+                //this.port = Integer.parseInt(this.controlPanel.getPort().getText());
                 this.createConnection();
             } catch (NumberFormatException e) {
                 e.printStackTrace();
