@@ -39,27 +39,24 @@ public class Server implements Runnable {
             this.serverSocket = new ServerSocket(this.port);
             //metemos all esto en un bucle infinito para que acepte todas las conexiones entrantes
             while (true) {
-                //aceptamos todas las conexiones
-                this.clientSocket = this.serverSocket.accept();
-                //--------------DETECTAR CLIENTES ONLINE---------------
-                //aquí almacenamos la dirección del cliente
-                InetAddress ipDetected = clientSocket.getInetAddress();
-                this.clientIp = ipDetected.getHostAddress();
-                this.controlPanel.getNeighborIp().setName(this.clientIp);
-                //mainProject.Ball bolaRecibida=new mainProject.Ball();
-                //ObjectInputStream objectInputStream=new ObjectInputStream(clientSocket.getInputStream());
-                //bolaRecibida=(mainProject.Ball)objectInputStream.readObject();
-                //leemos lo que viene en el flujo de datos
-                DataInputStream inFlow = new DataInputStream(clientSocket.getInputStream());
-                //almacenamos el texto en una variable
-                System.out.println(inFlow.readUTF());
-                clientSocket.close();
-                /*if (!this.identifyConnection.identifyBallTask(inFlow.readUTF())) {
-                    //cerramos la conexion
-
-                } else {
-                    System.out.println("connection created successfully!");
-                }*/
+                if(identifyConnection.identifyBallTask(this.serverSocket)) {
+                    //aceptamos todas las conexiones
+                    this.clientSocket = this.serverSocket.accept();
+                    //--------------DETECTAR CLIENTES ONLINE---------------
+                    //aquí almacenamos la dirección del cliente
+                    InetAddress ipDetected = clientSocket.getInetAddress();
+                    this.clientIp = ipDetected.getHostAddress();
+                    this.controlPanel.getNeighborIp().setName(this.clientIp);
+                    //mainProject.Ball bolaRecibida=new mainProject.Ball();
+                    //ObjectInputStream objectInputStream=new ObjectInputStream(clientSocket.getInputStream());
+                    //bolaRecibida=(mainProject.Ball)objectInputStream.readObject();
+                    //leemos lo que viene en el flujo de datos
+                    DataInputStream inFlow = new DataInputStream(clientSocket.getInputStream());
+                    //almacenamos el texto en una variable
+                    System.out.println("Soy el server");
+                    System.out.println(inFlow.readUTF());
+                    clientSocket.close();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

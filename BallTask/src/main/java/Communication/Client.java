@@ -25,6 +25,7 @@ public class Client implements Runnable {
         try {
             this.clientSocket = new Socket(this.ip, this.port);
             DataOutputStream outFlow = new DataOutputStream(this.clientSocket.getOutputStream());
+            System.out.println("Soy en cliente");
             outFlow.writeUTF("BallTask");
             outFlow.close();
         } catch (IOException e) {
