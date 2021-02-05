@@ -25,11 +25,8 @@ public class Client implements Runnable {
         try {
             this.clientSocket = new Socket(this.ip, this.port);
             DataOutputStream outFlow = new DataOutputStream(this.clientSocket.getOutputStream());
-            outFlow.writeUTF("mainProject.BallTask");
+            outFlow.writeUTF("BallTask");
             outFlow.close();
-            //ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-            //objectOutputStream.writeObject(new mainProject.Ball());
-            //socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -39,14 +36,6 @@ public class Client implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
-            //this.port = Integer.parseInt(this.controlPanel.getPort().getText());
-            this.setUpConnection();
-            try {
-                this.clientThread.sleep(4);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        this.setUpConnection();
     }
 }

@@ -11,7 +11,7 @@ import java.net.Socket;
 //setSoTimeout(ms)
 public class Server implements Runnable {
 
-    private int port=8082;
+    private int port = 8082;
     private ControlPanel controlPanel;
     private IdentifyConnection identifyConnection;
     private Thread serverThread;
@@ -53,12 +53,13 @@ public class Server implements Runnable {
                 DataInputStream inFlow = new DataInputStream(clientSocket.getInputStream());
                 //almacenamos el texto en una variable
                 System.out.println(inFlow.readUTF());
-                if (!this.identifyConnection.identifyBallTask(inFlow.readUTF())) {
+                clientSocket.close();
+                /*if (!this.identifyConnection.identifyBallTask(inFlow.readUTF())) {
                     //cerramos la conexion
-                    clientSocket.close();
+
                 } else {
                     System.out.println("connection created successfully!");
-                }
+                }*/
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -67,13 +68,6 @@ public class Server implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
-            try {
-                //this.port = Integer.parseInt(this.controlPanel.getPort().getText());
-                this.createConnection();
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-            }
-        }
+            this.createConnection();
     }
 }

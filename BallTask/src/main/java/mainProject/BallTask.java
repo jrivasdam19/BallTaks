@@ -1,5 +1,6 @@
 package mainProject;
 
+import Communication.Client;
 import Communication.Server;
 
 import javax.swing.*;
@@ -14,6 +15,7 @@ public class BallTask extends JFrame implements ActionListener {
     private ControlPanel controlPanel;
     private Stadistics stadistics;
     private Server server;
+    private Client client;
     private ArrayList<BlackHole> blackHoleList = new ArrayList<>();
     private ArrayList<Ball> ballList = new ArrayList<>();
 
@@ -34,6 +36,7 @@ public class BallTask extends JFrame implements ActionListener {
         this.stadistics = new Stadistics();
         this.controlPanel = new ControlPanel(this.ballList, this.stadistics, this);
         this.server=new Server(this.controlPanel);
+        this.client=new Client(this.controlPanel);
         this.createFrame();
         this.setResizable(true);
     }
