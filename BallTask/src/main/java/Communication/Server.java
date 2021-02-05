@@ -67,11 +67,13 @@ public class Server implements Runnable {
 
     @Override
     public void run() {
-        try {
-            this.port = Integer.parseInt(this.controlPanel.getPort().getText());
-            this.createConnection();
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
+        while (true) {
+            try {
+                this.port = Integer.parseInt(this.controlPanel.getPort().getText());
+                this.createConnection();
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
