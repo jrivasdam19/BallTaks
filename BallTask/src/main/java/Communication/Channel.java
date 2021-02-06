@@ -25,9 +25,8 @@ public class Channel implements Runnable {
         this.ballTask = ballTask;
         this.server = server;
         this.client = client;
-        this.createSocket();
-        //this.channelThread = new Thread(this);
-        //this.channelThread.start();
+        this.channelThread = new Thread(this);
+        this.channelThread.start();
     }
     //enviar un acknowledge
     //enviar la bola y el thread de la bola tiene que morir
@@ -56,33 +55,29 @@ public class Channel implements Runnable {
         }
     }
 
-    private void receiveBall(Socket socket) {
-        if (socket!=null) {
+    private void receiveBall(ObjectInputStream inputStream) {
             try {
-                this.inPutBall=new ObjectInputStream(socket.getInputStream());
-                if (this.inPutBall.readObject() instanceof Ball) {
-                    this.ballTask.generateNewBall((Ball) this.inPutBall.readObject());
+                if (inputStream.readObject() instanceof Ball) {
+                    this.ballTask.generateNewBall((Ball) inputStream.readObject());
                 }
-                this.inPutBall.close();
-                this.socket.close();
+                inputStream.close();
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
-        }
     }
 
     @Override
     public void run() {
         while (true) {
-            Socket socket=null;
+            ObjectInputStream inputStream=null;
             try {
-                socket=new ServerSocket(8082).accept();
+                inputStream=new ObjectInputStream(new Socket("192.168.1.104",8082).getInputStream());
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if(socket!=null){
-                this.receiveBall(socket);
+            if(inputStream!=null){
+                this.receiveBall(inputStream);
             }
         }
     }

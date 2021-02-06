@@ -9,7 +9,7 @@ import java.net.Socket;
 public class Client implements Runnable {
 
     private ControlPanel controlPanel;
-    private String ip = "172.16.8.181";
+    private String ip = "192.168.1.104";
     private int port = 8082;
     private Thread clientThread;
     private Socket clientSocket;
