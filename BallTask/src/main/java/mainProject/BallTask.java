@@ -54,13 +54,13 @@ public class BallTask extends JFrame implements ActionListener {
         if (!StringUtils.equals(str,"")) {
             if(this.controlPanel.isOpenedLeftEdge()){
                 if(StringUtils.equals(str,"Left")){
-                    this.channel.sendBall(ball);
-                    ball.getBALL_THREAD().interrupt();
+                    System.out.println("enviando la bola por la izquierda");
+                    this.sendAndEraseBall(ball);
                 }
             }else if(this.controlPanel.isOpenedRightEdge()){
                 if(StringUtils.equals(str,"Right")){
-                    this.channel.sendBall(ball);
-                    ball.getBALL_THREAD().interrupt();
+                    System.out.println("enviando la bola por la derecha");
+                    this.sendAndEraseBall(ball);
                 }
             }
             this.defineBounce(ball, str);
@@ -86,6 +86,16 @@ public class BallTask extends JFrame implements ActionListener {
     }
 
     //------------------------------------------------------------------------------------------------------------------
+
+    private void sendAndEraseBall(Ball ball){
+        this.channel.sendBall(ball);
+        ball.getBALL_THREAD().interrupt();
+        for (int i = 0; i < this.ballList.size(); i++) {
+            if(this.ballList.get(i)==ball){
+                this.ballList.remove(i);
+            }
+        }
+    }
 
     private void addControlPaneToFrame(Container container) {
         GridBagConstraints c = new GridBagConstraints();

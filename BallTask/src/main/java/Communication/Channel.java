@@ -46,10 +46,11 @@ public class Channel implements Runnable {
 
     public void sendBall(Ball ball) {
         try {
-            this.createSocket();
+            //this.createSocket();
+            this.outPutBall=(new ObjectOutputStream(new Socket("192.168.1.104",8082).getOutputStream()));
             this.outPutBall.writeObject(ball);
             this.outPutBall.close();
-            this.socket.close();
+            System.out.println("bola enviada!");
         } catch (IOException e) {
             e.printStackTrace();
         }
