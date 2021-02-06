@@ -4,28 +4,34 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 
-//se encarga de comprobar si el que se conecta es un mainProject.BallTask
-public class IdentifyConnection {
+public class IdentifyConnection implements Runnable {
 
-    public IdentifyConnection() {
+    private Socket clientSocket;
+    private Channel channel;
+    private Thread t;
 
+    public IdentifyConnection(Socket clientSocket, Channel channel) {
+        this.clientSocket = clientSocket;
+        this.channel = channel;
+        t = new Thread(this);
+        t.start();
     }
 
-    public boolean identifyBallTask(ServerSocket serverSocket) {
-        boolean ballTaskConnection = false;
+    private void identifyBallTask() {
         try {
-            Socket clientSocket = serverSocket.accept();
-            String str = (new DataInputStream(clientSocket.getInputStream())).readUTF();
-            if (StringUtils.equals("BallTask", str)) {
-                System.out.println("cliente identificado!");
-                ballTaskConnection = true;
+            DataInputStream inputStream = new DataInputStream(this.clientSocket.getInputStream());
+            if (StringUtils.equals(inputStream.readUTF(), "BallTask")) {
+                this.channel.assignSocket(this.clientSocket);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return ballTaskConnection;
+    }
+
+    @Override
+    public void run() {
+        this.identifyBallTask();
     }
 }

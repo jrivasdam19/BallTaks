@@ -33,9 +33,9 @@ public class BallTask extends JFrame implements ActionListener {
         Ball.ballTask = this;
         this.stadistics = new Stadistics();
         this.controlPanel = new ControlPanel(this.ballList, this.stadistics, this);
-        this.server=new Server(this.controlPanel);
-        this.client=new Client(this.controlPanel);
-        this.channel=new Channel(this.server,this.client,this);
+        this.channel=new Channel(this);
+        this.server=new Server(this.channel);
+        this.client=new Client(this.channel);
         this.createFrame();
         this.setResizable(true);
     }

@@ -10,20 +10,19 @@ import java.net.Socket;
 
 public class Channel implements Runnable {
 
-    private Server server;
-    private Client client;
     private BallTask ballTask;
-    private ObjectOutputStream outPutBall;
-    private ObjectInputStream inPutBall;
     private Socket socket;
     private Thread channelThread;
-    private HealthConnection healthConnection;
+    private boolean running;
+    //private HealthConnection healthConnection = new HealthConnection(this);
 
-    public Channel(Server server, Client client, BallTask ballTask) {
-        this.healthConnection = new HealthConnection(this);
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public Channel(BallTask ballTask) {
+        this.running = true;
         this.ballTask = ballTask;
-        this.server = server;
-        this.client = client;
         this.channelThread = new Thread(this);
         this.channelThread.start();
     }
@@ -33,22 +32,17 @@ public class Channel implements Runnable {
     //méotodo: identificar el comando, si es una bola detectaremos las carac. de la bola
     //primero identificamos el tipo de paquete, y después sacamos los datos.
 
-    private void createSocket() {
-        try {
-            this.socket = new Socket(this.client.getIp(), this.client.getPort());
-            this.outPutBall=new ObjectOutputStream(this.socket.getOutputStream());
-            this.inPutBall=new ObjectInputStream(this.socket.getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public boolean isOk() {
+        return this.socket != null;
     }
 
     public synchronized void sendBall(Ball ball) {
+        ObjectOutputStream outputStream =null;
         try {
             //this.createSocket();
-            this.outPutBall=new ObjectOutputStream(this.socket.getOutputStream());
-            this.outPutBall.writeObject(ball);
-            this.outPutBall.close();
+            outputStream = new ObjectOutputStream(this.socket.getOutputStream());
+            outputStream.writeObject(ball);
+            outputStream.close();
             System.out.println("bola enviada!");
         } catch (IOException e) {
             e.printStackTrace();
@@ -56,29 +50,46 @@ public class Channel implements Runnable {
     }
 
     private void receiveBall(ObjectInputStream inputStream) {
-            try {
-                if (inputStream.readObject() instanceof Ball) {
-                    this.ballTask.generateNewBall((Ball) inputStream.readObject());
-                }
-                inputStream.close();
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+        try {
+            if (inputStream.readObject() instanceof Ball) {
+                this.ballTask.generateNewBall((Ball) inputStream.readObject());
             }
+            inputStream.close();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized void assignSocket(Socket socket) {
+        if (this.socket != null && !this.socket.equals(socket)) {
+            this.socket = socket;
+        }
+    }
+
+    public synchronized void quitSocket() {
+        this.closeSocket(this.socket);
+        this.socket = null;
+    }
+
+    private void closeSocket(Socket socket) {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void run() {
-        while (true) {
-            if(!this.client.getClientSocket().isClosed() && this.client.getClientSocket()!=null){
-                this.socket=this.client.getClientSocket();
-                ObjectInputStream inputStream=null;
+        while (this.running) {
+            ObjectInputStream inputStream = null;
+            while (!this.socket.isClosed() && this.isOk()) {
                 try {
-                    inputStream=new ObjectInputStream(this.socket.getInputStream());
-
+                    inputStream = new ObjectInputStream(this.socket.getInputStream());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if(inputStream!=null){
+                if (inputStream != null) {
                     this.receiveBall(inputStream);
                 }
             }

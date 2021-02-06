@@ -1,18 +1,18 @@
 package Communication;
 
-import mainProject.ControlPanel;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
 public class Client implements Runnable {
 
-    private ControlPanel controlPanel;
     private String ip = "192.168.1.104";
     private int port = 8082;
     private Thread clientThread;
     private Socket clientSocket;
+    private final int DELAY = 4000;
+    private boolean running;
+    private Channel channel;
 
     public String getIp() {
         return ip;
@@ -26,8 +26,9 @@ public class Client implements Runnable {
         return clientSocket;
     }
 
-    public Client(ControlPanel controlPanel) {
-        this.controlPanel = controlPanel;
+    public Client(Channel channel) {
+        this.running = true;
+        this.channel = channel;
         clientThread = new Thread(this);
         clientThread.start();
     }
@@ -37,9 +38,16 @@ public class Client implements Runnable {
         try {
             this.clientSocket = new Socket(this.ip, this.port);
             DataOutputStream outFlow = new DataOutputStream(this.clientSocket.getOutputStream());
-            System.out.println("Soy en cliente");
             outFlow.writeUTF("BallTask");
             outFlow.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void closeSocket(Socket socket) {
+        try {
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -49,6 +57,21 @@ public class Client implements Runnable {
 
     @Override
     public void run() {
-        this.setUpConnection();
+        while (this.running) {
+            try {
+                this.clientThread.sleep(this.DELAY);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            this.setUpConnection();
+            if (this.clientSocket != null) {
+                if (this.clientSocket != this.channel.getSocket()) {
+                    this.channel.assignSocket(this.clientSocket);
+                } else {
+                    this.closeSocket(this.clientSocket);
+                    this.clientSocket = null;
+                }
+            }
+        }
     }
 }
