@@ -44,8 +44,8 @@ public class ControlPanel extends JPanel implements Runnable {
     }
 
     public ControlPanel(ArrayList<Ball> ballList, Stadistics stadistics, BallTask ballTask) {
-        this.openedLeftEdge=false;
-        this.openedRightEdge=false;
+        this.openedLeftEdge = false;
+        this.openedRightEdge = false;
         this.ballList = ballList;
         this.stadistics = stadistics;
         this.ballTask = ballTask;
@@ -64,7 +64,7 @@ public class ControlPanel extends JPanel implements Runnable {
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 7;
-        c.gridheight=2;
+        c.gridheight = 2;
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 5, 10, 5);
         this.add(this.statsTable, c);
@@ -72,7 +72,7 @@ public class ControlPanel extends JPanel implements Runnable {
         c.gridx = 7;
         c.gridy = 0;
         c.gridwidth = 3;
-        c.gridheight=1;
+        c.gridheight = 1;
         this.add(this.addBall, c);
 
         c.gridy = 1;
@@ -87,20 +87,20 @@ public class ControlPanel extends JPanel implements Runnable {
 
         c.gridx = 13;
         c.gridy = 0;
-        c.gridwidth=6;
+        c.gridwidth = 6;
         c.fill = GridBagConstraints.HORIZONTAL;
         this.add(this.neighborIp, c);
 
-        c.gridy=1;
+        c.gridy = 1;
         this.add(this.port, c);
 
         c.gridx = 19;
         c.gridy = 0;
-        c.gridwidth=2;
-        this.add(this.leftSide,c);
+        c.gridwidth = 2;
+        this.add(this.leftSide, c);
 
         c.gridy = 1;
-        this.add(this.rightSide,c);
+        this.add(this.rightSide, c);
     }
 
     private void createButtons() {
@@ -129,19 +129,19 @@ public class ControlPanel extends JPanel implements Runnable {
     public void changeBoxState(String str) {
         switch (str) {
             case "Right side":
-                this.openedRightEdge=true;
-                this.openedLeftEdge=false;
+                this.openedRightEdge = true;
+                this.openedLeftEdge = false;
                 this.leftSide.setSelected(false);
                 break;
             case "Left side":
-                this.openedLeftEdge=true;
-                this.openedRightEdge=false;
+                this.openedLeftEdge = true;
+                this.openedRightEdge = false;
                 this.rightSide.setSelected(false);
         }
     }
 
-    public void enableButton(String str){
-        switch (str){
+    public void enableButton(String str) {
+        switch (str) {
             case "Resume":
                 this.resume.setEnabled(false);
                 this.stop.setEnabled(true);
