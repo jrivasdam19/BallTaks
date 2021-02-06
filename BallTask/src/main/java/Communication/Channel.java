@@ -6,7 +6,6 @@ import mainProject.BallTask;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Channel implements Runnable {
@@ -44,10 +43,10 @@ public class Channel implements Runnable {
         }
     }
 
-    public void sendBall(Ball ball) {
+    public synchronized void sendBall(Ball ball) {
         try {
             //this.createSocket();
-            this.outPutBall=(new ObjectOutputStream(new Socket("192.168.1.104",8082).getOutputStream()));
+            this.outPutBall=new ObjectOutputStream(this.socket.getOutputStream());
             this.outPutBall.writeObject(ball);
             this.outPutBall.close();
             System.out.println("bola enviada!");
@@ -70,15 +69,18 @@ public class Channel implements Runnable {
     @Override
     public void run() {
         while (true) {
-            ObjectInputStream inputStream=null;
-            try {
-                inputStream=new ObjectInputStream(new Socket("192.168.1.104",8082).getInputStream());
+            if(!this.client.getClientSocket().isClosed() && this.client.getClientSocket()!=null){
+                this.socket=this.client.getClientSocket();
+                ObjectInputStream inputStream=null;
+                try {
+                    inputStream=new ObjectInputStream(this.socket.getInputStream());
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if(inputStream!=null){
-                this.receiveBall(inputStream);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if(inputStream!=null){
+                    this.receiveBall(inputStream);
+                }
             }
         }
     }

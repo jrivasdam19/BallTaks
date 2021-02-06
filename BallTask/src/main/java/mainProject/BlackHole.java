@@ -7,8 +7,6 @@ public class BlackHole implements VisibleObject {
 
     private final Rectangle2D.Double rectangle2D;
     private boolean isFull;
-    public static Viewer viewer;
-    public static Stadistics stadistics;
 
     public boolean isFull() {
         return isFull;

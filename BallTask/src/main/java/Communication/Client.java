@@ -22,6 +22,10 @@ public class Client implements Runnable {
         return port;
     }
 
+    public Socket getClientSocket() {
+        return clientSocket;
+    }
+
     public Client(ControlPanel controlPanel) {
         this.controlPanel = controlPanel;
         clientThread = new Thread(this);

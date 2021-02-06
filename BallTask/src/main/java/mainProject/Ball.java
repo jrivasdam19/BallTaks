@@ -1,18 +1,13 @@
 package mainProject;
 
-import mainProject.BallTask;
-import mainProject.BlackHole;
-
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
-import java.util.ArrayList;
+import java.io.Serializable;
 
-public class Ball implements VisibleObject, Runnable {
+public class Ball implements VisibleObject, Runnable, Serializable {
 
     private final Thread BALL_THREAD;
-    public static Viewer viewer;
     public static BallTask ballTask;
-    public static ArrayList<BlackHole> blackHoleList;
     private final int SIZE_X = 15;
     private final int SIZE_Y = 15;
     private Color color = Color.BLACK;
@@ -53,6 +48,50 @@ public class Ball implements VisibleObject, Runnable {
 
     public Thread getBALL_THREAD() {
         return BALL_THREAD;
+    }
+
+    public static BallTask getBallTask() {
+        return ballTask;
+    }
+
+    public static void setBallTask(BallTask ballTask) {
+        Ball.ballTask = ballTask;
+    }
+
+    public int getSIZE_X() {
+        return SIZE_X;
+    }
+
+    public int getSIZE_Y() {
+        return SIZE_Y;
+    }
+
+    public boolean isLiveBall() {
+        return liveBall;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public double getDx() {
+        return dx;
+    }
+
+    public void setDx(double dx) {
+        this.dx = dx;
+    }
+
+    public double getDy() {
+        return dy;
+    }
+
+    public void setDy(double dy) {
+        this.dy = dy;
     }
 
     public Ball() {

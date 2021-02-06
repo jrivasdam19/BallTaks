@@ -27,14 +27,10 @@ public class BallTask extends JFrame implements ActionListener {
     public static final int DELAY = 6;
 
     public BallTask() {
-        BlackHole.stadistics = this.stadistics;
         this.blackHoleList.add(new BlackHole(140, 200, 300, 120));
         this.blackHoleList.add(new BlackHole(700, 80, 150, 300));
         this.viewer = new Viewer(this.blackHoleList, this.ballList);
-        Ball.viewer = this.viewer;
         Ball.ballTask = this;
-        Ball.blackHoleList = this.blackHoleList;
-        BlackHole.viewer = this.viewer;
         this.stadistics = new Stadistics();
         this.controlPanel = new ControlPanel(this.ballList, this.stadistics, this);
         this.server=new Server(this.controlPanel);
