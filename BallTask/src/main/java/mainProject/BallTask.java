@@ -1,7 +1,9 @@
 package mainProject;
 
+import Communication.Channel;
 import Communication.Client;
 import Communication.Server;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,6 +18,7 @@ public class BallTask extends JFrame implements ActionListener {
     private Stadistics stadistics;
     private Server server;
     private Client client;
+    private Channel channel;
     private ArrayList<BlackHole> blackHoleList = new ArrayList<>();
     private ArrayList<Ball> ballList = new ArrayList<>();
 
@@ -37,6 +40,7 @@ public class BallTask extends JFrame implements ActionListener {
         this.controlPanel = new ControlPanel(this.ballList, this.stadistics, this);
         this.server=new Server(this.controlPanel);
         this.client=new Client(this.controlPanel);
+        this.channel=new Channel(this.server,this.client,this);
         this.createFrame();
         this.setResizable(true);
     }
@@ -47,7 +51,18 @@ public class BallTask extends JFrame implements ActionListener {
         boolean collision = false;
         String str = "";
         str = this.checkLimits(ball, this.viewer.getBounds());
-        if (!str.equals("")) {
+        if (!StringUtils.equals(str,"")) {
+            if(this.controlPanel.isOpenedLeftEdge()){
+                if(StringUtils.equals(str,"Left")){
+                    this.channel.sendBall(ball);
+                    ball.getBALL_THREAD().interrupt();
+                }
+            }else if(this.controlPanel.isOpenedRightEdge()){
+                if(StringUtils.equals(str,"Right")){
+                    this.channel.sendBall(ball);
+                    ball.getBALL_THREAD().interrupt();
+                }
+            }
             this.defineBounce(ball, str);
             collision = true;
         } else {
@@ -62,6 +77,12 @@ public class BallTask extends JFrame implements ActionListener {
         if (!collision) {
             ball.keepMoving();
         }
+    }
+
+    public void generateNewBall(Ball ball){
+        Ball.liveBall = true;
+        this.ballList.add(ball);
+        this.stadistics.addNewBall();
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -99,13 +120,13 @@ public class BallTask extends JFrame implements ActionListener {
         //borde izquierdo
         if (ball.getX() + 1 == limits.getMinX()) {
             if (ball.getY() + 1 > limits.getMinY() && ball.getY() + 1 < limits.getMaxY()) {
-                str = "H";
+                str = "Left";
             }
         }
         //borde derecho
         else if (ball.getX() + 1 == limits.getMaxX()) {
             if (ball.getY() + 1 > limits.getMinY() && ball.getY() + 1 < limits.getMaxY()) {
-                str = "H";
+                str = "Right";
             }
         }
         //borde superior
@@ -147,7 +168,10 @@ public class BallTask extends JFrame implements ActionListener {
 
     private void defineBounce(Ball ball, String str) {
         switch (str) {
-            case "H":
+            case "Left":
+                ball.bounceHorizontally();
+                break;
+            case "Right":
                 ball.bounceHorizontally();
                 break;
             case "V":
@@ -229,10 +253,8 @@ public class BallTask extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String str = e.getActionCommand();
         switch (str) {
-            case "Add mainProject.Ball":
-                Ball.liveBall = true;
-                this.ballList.add(new Ball());
-                this.stadistics.addNewBall();
+            case "Add New Ball":
+                this.generateNewBall(new Ball());
                 break;
             case "New Game":
                 this.interruptThreads();

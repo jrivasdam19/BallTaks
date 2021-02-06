@@ -14,6 +14,14 @@ public class Client implements Runnable {
     private Thread clientThread;
     private Socket clientSocket;
 
+    public String getIp() {
+        return ip;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
     public Client(ControlPanel controlPanel) {
         this.controlPanel = controlPanel;
         clientThread = new Thread(this);

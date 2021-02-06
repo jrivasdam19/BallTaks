@@ -9,6 +9,7 @@ public class ControlPanel extends JPanel implements Runnable {
     private JButton addBall, newGame, resume, stop;
     private JLabel neighborIp;
     private JTextField port;
+    private boolean openedLeftEdge, openedRightEdge;
     private JCheckBox leftSide, rightSide;
     private JTable statsTable;
     private ArrayList<Ball> ballList;
@@ -22,13 +23,29 @@ public class ControlPanel extends JPanel implements Runnable {
     private Thread controlThread;
     private final int DELAY = 4;
 
+    public boolean isOpenedLeftEdge() {
+        return openedLeftEdge;
+    }
 
+    public void setOpenedLeftEdge(boolean openedLeftEdge) {
+        this.openedLeftEdge = openedLeftEdge;
+    }
+
+    public boolean isOpenedRightEdge() {
+        return openedRightEdge;
+    }
+
+    public void setOpenedRightEdge(boolean openedRightEdge) {
+        this.openedRightEdge = openedRightEdge;
+    }
 
     public JTextField getPort() {
         return port;
     }
 
     public ControlPanel(ArrayList<Ball> ballList, Stadistics stadistics, BallTask ballTask) {
+        this.openedLeftEdge=false;
+        this.openedRightEdge=false;
         this.ballList = ballList;
         this.stadistics = stadistics;
         this.ballTask = ballTask;
@@ -87,7 +104,7 @@ public class ControlPanel extends JPanel implements Runnable {
     }
 
     private void createButtons() {
-        this.addBall = new JButton("Add mainProject.Ball");
+        this.addBall = new JButton("Add New Ball");
         this.addBall.addActionListener(this.ballTask);
         this.newGame = new JButton("New Game");
         this.newGame.addActionListener(this.ballTask);
@@ -112,9 +129,13 @@ public class ControlPanel extends JPanel implements Runnable {
     public void changeBoxState(String str) {
         switch (str) {
             case "Right side":
+                this.openedRightEdge=true;
+                this.openedLeftEdge=false;
                 this.leftSide.setSelected(false);
                 break;
             case "Left side":
+                this.openedLeftEdge=true;
+                this.openedRightEdge=false;
                 this.rightSide.setSelected(false);
         }
     }
