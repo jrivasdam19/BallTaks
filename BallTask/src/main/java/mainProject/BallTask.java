@@ -33,7 +33,6 @@ public class BallTask extends JFrame implements ActionListener {
         this.viewer = new Viewer(this.blackHoleList, this.ballList);
         Ball.viewer = this.viewer;
         Ball.ballTask = this;
-        Ball.liveBall = true;
         Ball.blackHoleList = this.blackHoleList;
         BlackHole.viewer = this.viewer;
         this.stadistics = new Stadistics();
@@ -80,7 +79,6 @@ public class BallTask extends JFrame implements ActionListener {
     }
 
     public void generateNewBall(Ball ball){
-        Ball.liveBall = true;
         this.ballList.add(ball);
         this.stadistics.addNewBall();
     }
@@ -89,11 +87,17 @@ public class BallTask extends JFrame implements ActionListener {
 
     private void sendAndEraseBall(Ball ball){
         this.channel.sendBall(ball);
-        ball.getBALL_THREAD().interrupt();
+        ball.setLiveBall(false);
         for (int i = 0; i < this.ballList.size(); i++) {
             if(this.ballList.get(i)==ball){
                 this.ballList.remove(i);
             }
+        }
+    }
+
+    private void killThreads(){
+        for(Ball ball:this.ballList){
+            ball.setLiveBall(false);
         }
     }
 
@@ -269,7 +273,7 @@ public class BallTask extends JFrame implements ActionListener {
             case "New Game":
                 this.interruptThreads();
                 this.ballList.clear();
-                Ball.liveBall = false;
+                this.killThreads();
                 this.stadistics.eraseBalls();
                 this.releaseBlackHoles();
                 break;

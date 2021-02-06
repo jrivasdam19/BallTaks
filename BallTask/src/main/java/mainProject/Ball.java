@@ -16,12 +16,16 @@ public class Ball implements VisibleObject, Runnable {
     private final int SIZE_X = 15;
     private final int SIZE_Y = 15;
     private Color color = Color.BLACK;
-    public static boolean liveBall;
+    public boolean liveBall;
     private double x = 5;
     private double y = 5;
     private double dx = 1;
     private double dy = 1;
     private boolean insideBlackHole;
+
+    public void setLiveBall(boolean liveBall) {
+        this.liveBall = liveBall;
+    }
 
     public Color getColor() {
         return color;
@@ -53,6 +57,7 @@ public class Ball implements VisibleObject, Runnable {
 
     public Ball() {
         this.insideBlackHole = false;
+        this.liveBall=true;
         this.BALL_THREAD = new Thread(this);
         this.BALL_THREAD.start();
     }
@@ -98,7 +103,7 @@ public class Ball implements VisibleObject, Runnable {
 
     @Override
     public void run() {
-        while (liveBall) {
+        while (this.liveBall) {
             ballTask.defineIntersect(this);
             try {
                 this.BALL_THREAD.sleep(BallTask.DELAY);
