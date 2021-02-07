@@ -31,11 +31,25 @@ public class Stadistics {
 
     //------------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Adds one new ball to Balls Outside Stadistics field.
+     */
     public void addNewBall(){
         this.ballsOutside++;
         this.calculateTotal();
     }
 
+    /**
+     * Removes one new ball from Balls Outside Stadistics field.
+     */
+    public void eraseBall(){
+        this.ballsOutside--;
+        this.calculateTotal();
+    }
+
+    /**
+     * Adds one ball to Balls Outside Stadistics field.
+     */
     public void addNewBallFromInside() {
         this.ballsInside--;
         this.ballsOutside++;

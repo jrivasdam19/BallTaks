@@ -93,14 +93,17 @@ public class Ball implements VisibleObject, Runnable {
 
     /**
      * Creates a new Ball instance with the given coordinates.
+     *
      * @param x Horizontal coordinate.
      * @param y Vertical coordinate.
      * @return New Ball instance.
      */
-    public static Ball createReceivedBall(double x, double y) {
+    public static Ball createReceivedBall(double x, double y, double dx, double dy) {
         Ball ball = new Ball();
         ball.x = x;
         ball.y = y;
+        ball.dx = dx;
+        ball.dy = dy;
         return ball;
     }
 
@@ -123,9 +126,10 @@ public class Ball implements VisibleObject, Runnable {
 
     /**
      * Defines ball shape.
-     * @param x Horizontal coordinate.
-     * @param y Vertical coordinate.
-     * @param width Ball expected width.
+     *
+     * @param x      Horizontal coordinate.
+     * @param y      Vertical coordinate.
+     * @param width  Ball expected width.
      * @param height Ball expected height.
      * @return Ellipse.
      */

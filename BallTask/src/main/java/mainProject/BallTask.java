@@ -44,6 +44,7 @@ public class BallTask extends JFrame implements ActionListener {
 
     /**
      * Defines whether ball intersects with Viewer or BlackHoles limits.
+     *
      * @param ball
      */
     public void defineIntersect(Ball ball) {
@@ -82,6 +83,7 @@ public class BallTask extends JFrame implements ActionListener {
 
     /**
      * Creates, starts and adds a new threaded Ball instance into ballList ArrayList. It will display so into Stadistics.
+     *
      * @param ball
      */
     public void generateNewBall(Ball ball) {
@@ -99,7 +101,9 @@ public class BallTask extends JFrame implements ActionListener {
     public Ball manageBallEntry(String informationTaken) {
         double x = Double.parseDouble(informationTaken.split(",")[1]);
         double y = Double.parseDouble(informationTaken.split(",")[2]);
-        switch (informationTaken.split(",")[3]) {
+        double dx = Double.parseDouble(informationTaken.split(",")[3]);
+        double dy = Double.parseDouble(informationTaken.split(",")[4]);
+        switch (informationTaken.split(",")[5]) {
             case "Right":
                 x = 0;
                 break;
@@ -107,7 +111,7 @@ public class BallTask extends JFrame implements ActionListener {
                 x = new Double(this.viewer.getWidth());
                 break;
         }
-        return Ball.createReceivedBall(x, y);
+        return Ball.createReceivedBall(x, y, dx, dy);
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -115,10 +119,12 @@ public class BallTask extends JFrame implements ActionListener {
     /**
      * Passes ball instance to Channel class in order to be sent out. Also remove this instance from ballList and let
      * Thread execution finish.
+     *
      * @param ball
      */
     private void manageBallExit(Ball ball) {
         this.channel.sendBallFeatures(ball);
+        this.stadistics.eraseBall();
         ball.setLiveBall(false);
         this.ballList.remove(ball);
     }
@@ -134,6 +140,7 @@ public class BallTask extends JFrame implements ActionListener {
 
     /**
      * Defines gridBagLayout constraints for ControlPanel to be added to Frame.
+     *
      * @param container
      */
     private void addControlPaneToFrame(Container container) {
@@ -152,6 +159,7 @@ public class BallTask extends JFrame implements ActionListener {
 
     /**
      * Defines gridBagLayout constraints for Viewer to be added to Frame.
+     *
      * @param container
      */
     private void addViewerToFrame(Container container) {
@@ -170,6 +178,7 @@ public class BallTask extends JFrame implements ActionListener {
 
     /**
      * Checks in which of rectangle limits intersect happens.
+     *
      * @param ball
      * @param limits Square shape object bounds.
      * @return String with the intersect.
@@ -229,8 +238,9 @@ public class BallTask extends JFrame implements ActionListener {
 
     /**
      * Defines with type of bounce ball should do.
+     *
      * @param ball
-     * @param str String with the intersect.
+     * @param str  String with the intersect.
      */
     private void defineBounce(Ball ball, String str) {
         switch (str) {
@@ -251,6 +261,7 @@ public class BallTask extends JFrame implements ActionListener {
 
     /**
      * Manages ball intersect with BlackHole object.
+     *
      * @param ball
      * @param blackHole
      */
