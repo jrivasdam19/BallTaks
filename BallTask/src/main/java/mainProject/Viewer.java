@@ -37,8 +37,10 @@ public class Viewer extends Canvas implements Runnable {
 
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        for (Ball ball : this.ballList) ball.paint(g2);
-        for (BlackHole blackHole : this.blackHoleList) blackHole.paint(g2);
+        for (int i = 0; i < this.ballList.size(); i++) this.ballList.get(i).paint(g2);
+        for (int i = 0; i < this.blackHoleList.size(); i++) this.blackHoleList.get(i).paint(g2);
+        //for (Ball ball : this.ballList) ball.paint(g2);
+        //for (BlackHole blackHole : this.blackHoleList) blackHole.paint(g2);
     }
 
     //------------------------------------------------------------------------------------------------------------------
