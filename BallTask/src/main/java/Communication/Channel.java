@@ -70,7 +70,7 @@ public class Channel implements Runnable {
         try {
             DataOutputStream outputStream = new DataOutputStream(this.socket.getOutputStream());
             outputStream.writeUTF("Can you hear me?");
-            outputStream.close();
+            //outputStream.close();
             System.out.println("Acknowledgment enviado!");
         } catch (IOException e) {
             System.out.println("Problema enviando el acknowledgment");
@@ -87,7 +87,7 @@ public class Channel implements Runnable {
         try {
             DataOutputStream outputStream = new DataOutputStream(this.socket.getOutputStream());
             outputStream.writeUTF(this.buildStringFeatures(ball));
-            outputStream.close();
+            //outputStream.close();
             System.out.println("Bola enviada!");
         } catch (IOException e) {
             this.healthyChannel = false;
@@ -127,13 +127,13 @@ public class Channel implements Runnable {
             } else if (StringUtils.equals(informationTaken, "Can you hear me?")) {
                 DataOutputStream outputStream = new DataOutputStream(this.socket.getOutputStream());
                 outputStream.writeUTF("Yes");
-                outputStream.close();
+                //outputStream.close();
                 System.out.println("Contestando al acknowledgment");
             } else if (StringUtils.equals(informationTaken, "Yes")) {
                 System.out.println("Recibido Yes!");
                 this.healthConnection.setAcknowledgmentReceived(true);
             }
-            inputStream.close();
+            //inputStream.close();
         } catch (IOException e) {
             System.out.println("Problemas en receiveAnswer");
             this.healthyChannel = false;

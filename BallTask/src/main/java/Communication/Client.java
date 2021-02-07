@@ -35,7 +35,7 @@ public class Client implements Runnable {
                 this.clientSocket = new Socket(this.ip, this.port);
                 DataOutputStream outFlow = new DataOutputStream(this.clientSocket.getOutputStream());
                 outFlow.writeUTF("BallTask");
-                outFlow.close();
+                //outFlow.close();
                 DataInputStream inFlow = new DataInputStream(this.clientSocket.getInputStream());
                 if (StringUtils.equals(inFlow.readUTF(), "Welcome!")) {
                     this.channel.assignSocket(this.clientSocket);
