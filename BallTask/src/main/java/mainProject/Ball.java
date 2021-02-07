@@ -50,6 +50,14 @@ public class Ball implements VisibleObject, Runnable {
         return y;
     }
 
+    public double getDx() {
+        return dx;
+    }
+
+    public double getDy() {
+        return dy;
+    }
+
     public void setColor(Color color) {
         this.color = color;
     }

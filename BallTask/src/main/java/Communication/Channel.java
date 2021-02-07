@@ -108,8 +108,8 @@ public class Channel implements Runnable {
         return "Sending ball" + "," +
                 ball.getX() + "," +
                 ball.getY() + "," +
-                ball.getY() + "," +
-                ball.getY() + "," +
+                ball.getDx() + "," +
+                ball.getDy() + "," +
                 ball.getExitWall();
     }
 
