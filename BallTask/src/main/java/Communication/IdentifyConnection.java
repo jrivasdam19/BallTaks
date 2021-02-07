@@ -25,6 +25,7 @@ public class IdentifyConnection implements Runnable {
         try {
             DataInputStream inputStream = new DataInputStream(this.clientSocket.getInputStream());
             if (StringUtils.equals(inputStream.readUTF(), "BallTask")) {
+                System.out.println("detectado cliente BallTask");
                 this.channel.assignSocket(this.clientSocket);
                 DataOutputStream outputStream = new DataOutputStream(this.clientSocket.getOutputStream());
                 outputStream.writeUTF("Welcome!");

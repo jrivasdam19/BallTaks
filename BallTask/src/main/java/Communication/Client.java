@@ -29,6 +29,7 @@ public class Client implements Runnable {
      * Sets up and identifies connection with server.
      */
     private void setUpConnection() {
+        this.clientSocket=null;
         try {
             if (!this.channel.isOk()) {
                 this.clientSocket = new Socket(this.ip, this.port);
