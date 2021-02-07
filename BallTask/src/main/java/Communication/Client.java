@@ -1,5 +1,8 @@
 package Communication;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -7,24 +10,12 @@ import java.net.Socket;
 public class Client implements Runnable {
 
     private String ip = "192.168.1.104";
-    private int port = 8082;
+    private int port = 8085;
     private Thread clientThread;
-    private Socket clientSocket;
+    private Socket clientSocket = null;
     private final int DELAY = 4000;
     private boolean running;
     private Channel channel;
-
-    public String getIp() {
-        return ip;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public Socket getClientSocket() {
-        return clientSocket;
-    }
 
     public Client(Channel channel) {
         this.running = true;
@@ -34,21 +25,24 @@ public class Client implements Runnable {
     }
     //------------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Sets up and identifies connection with server.
+     */
     private void setUpConnection() {
         try {
-            this.clientSocket = new Socket(this.ip, this.port);
-            DataOutputStream outFlow = new DataOutputStream(this.clientSocket.getOutputStream());
-            outFlow.writeUTF("BallTask");
-            outFlow.close();
+            if (!this.channel.isOk()) {
+                this.clientSocket = new Socket(this.ip, this.port);
+                DataOutputStream outFlow = new DataOutputStream(this.clientSocket.getOutputStream());
+                outFlow.writeUTF("BallTask");
+                outFlow.close();
+                DataInputStream inFlow = new DataInputStream(this.clientSocket.getInputStream());
+                if (StringUtils.equals(inFlow.readUTF(), "Welcome!")) {
+                    this.channel.assignSocket(this.clientSocket);
+                    System.out.println("Conexión establecida");
+                }
+            }
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void closeSocket(Socket socket) {
-        try {
-            socket.close();
-        } catch (IOException e) {
+            System.out.println("Problema en setUpConnection()");
             e.printStackTrace();
         }
     }
@@ -59,19 +53,13 @@ public class Client implements Runnable {
     public void run() {
         while (this.running) {
             try {
+                this.setUpConnection();
                 this.clientThread.sleep(this.DELAY);
             } catch (InterruptedException e) {
+                System.out.println("Problema en el run de client");
                 e.printStackTrace();
             }
-            this.setUpConnection();
-            if (this.clientSocket != null) {
-                if (this.clientSocket != this.channel.getSocket()) {
-                    this.channel.assignSocket(this.clientSocket);
-                } else {
-                    this.closeSocket(this.clientSocket);
-                    this.clientSocket = null;
-                }
-            }
+
         }
     }
 }

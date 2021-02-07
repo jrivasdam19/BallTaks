@@ -3,6 +3,7 @@ package Communication;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -10,6 +11,7 @@ public class IdentifyConnection implements Runnable {
 
     private Socket clientSocket;
     private Channel channel;
+    private boolean clientIdentified;
     private Thread t;
 
     public IdentifyConnection(Socket clientSocket, Channel channel) {
@@ -24,14 +26,24 @@ public class IdentifyConnection implements Runnable {
             DataInputStream inputStream = new DataInputStream(this.clientSocket.getInputStream());
             if (StringUtils.equals(inputStream.readUTF(), "BallTask")) {
                 this.channel.assignSocket(this.clientSocket);
+                DataOutputStream outputStream = new DataOutputStream(this.clientSocket.getOutputStream());
+                outputStream.writeUTF("Welcome!");
+                this.clientIdentified = true;
+            } else {
+                System.out.println("No es un cliente BallTask");
+                this.clientIdentified = true;
             }
         } catch (IOException e) {
+            System.out.println("Problema en identifyBalltask()");
             e.printStackTrace();
         }
     }
 
     @Override
     public void run() {
-        this.identifyBallTask();
+        this.clientIdentified = false;
+        while (!this.clientIdentified) {
+            this.identifyBallTask();
+        }
     }
 }

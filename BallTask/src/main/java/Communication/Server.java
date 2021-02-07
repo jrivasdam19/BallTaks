@@ -6,11 +6,12 @@ import java.net.Socket;
 
 public class Server implements Runnable {
 
-    private int port = 8082;
+    private int port = 8085;
     private Thread serverThread;
     private boolean running;
     private Channel channel;
-    private ServerSocket serverSocket;
+    private ServerSocket serverSocket = null;
+    private Socket clientSocket;
 
     public Server(Channel channel) {
         this.channel = channel;
@@ -21,31 +22,41 @@ public class Server implements Runnable {
 
     //------------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Creates the a ServerSocket instance with the assigned port.
+     */
     private void createConnection() {
         try {
-            this.serverSocket = null;
-            while (this.running) {
-                this.serverSocket = new ServerSocket(this.port);
-                Socket clientSocket = serverSocket.accept();
-                new IdentifyConnection(clientSocket,this.channel);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-        this.closeSocket(this.serverSocket);
+            this.serverSocket = new ServerSocket(this.port);
+        } catch (IOException ioException) {
+            System.out.println("No se ha podido crear el ServerSocket");
+            ioException.printStackTrace();
         }
     }
 
-    private void closeSocket(ServerSocket socket){
+    /**
+     * Put to listen in order to connect with the client.
+     */
+    private void startConnection() {
         try {
-            socket.close();
-        } catch (IOException e) {
+            if (!this.channel.isOk()) {
+                this.clientSocket = this.serverSocket.accept();
+                System.out.println("Creando conexión con: " + this.clientSocket.getInetAddress().getHostAddress());
+                new IdentifyConnection(this.clientSocket, this.channel);
+            }
+        } catch (Exception e) {
+            System.out.println("Problema en startConnection()");
             e.printStackTrace();
         }
     }
+
+    //------------------------------------------------------------------------------------------------------------------
 
     @Override
     public void run() {
         this.createConnection();
+        while (this.running) {
+            this.startConnection();
+        }
     }
 }
