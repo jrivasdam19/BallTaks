@@ -28,7 +28,7 @@ public class BallTask extends JFrame implements ActionListener {
 
     public BallTask() {
         this.blackHoleList.add(new BlackHole(140, 200, 300, 120));
-        this.blackHoleList.add(new BlackHole(700, 80, 150, 300));
+        this.blackHoleList.add(new BlackHole(720, 80, 150, 300));
         this.viewer = new Viewer(this.blackHoleList, this.ballList);
         Ball.ballTask = this;
         this.stadistics = new Stadistics();
