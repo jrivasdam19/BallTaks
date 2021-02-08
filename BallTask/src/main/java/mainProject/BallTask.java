@@ -108,7 +108,7 @@ public class BallTask extends JFrame implements ActionListener {
                 x = 0;
                 break;
             case "Left":
-                x = new Double(this.viewer.getWidth());
+                x = this.viewer.getBounds().getMaxX();
                 break;
         }
         return Ball.createReceivedBall(x, y, dx, dy);
