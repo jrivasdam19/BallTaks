@@ -108,7 +108,7 @@ public class BallTask extends JFrame implements ActionListener {
                 x = 0;
                 break;
             case "Left":
-                x = this.viewer.getBounds().getMaxX();
+                x = this.viewer.getWidth();
                 break;
         }
         return Ball.createReceivedBall(x, y, dx, dy);
@@ -143,8 +143,8 @@ public class BallTask extends JFrame implements ActionListener {
      *
      * @param container
      */
-    private void addControlPaneToFrame(Container container) {
-        GridBagConstraints c = new GridBagConstraints();
+    private void addControlPaneToFrame(Container container,GridBagConstraints c) {
+        //GridBagConstraints c = new GridBagConstraints();
 
         c.gridx = 0;
         c.gridy = 0;
@@ -162,8 +162,8 @@ public class BallTask extends JFrame implements ActionListener {
      *
      * @param container
      */
-    private void addViewerToFrame(Container container) {
-        GridBagConstraints c = new GridBagConstraints();
+    private void addViewerToFrame(Container container,GridBagConstraints c) {
+       // GridBagConstraints c = new GridBagConstraints();
 
         c.gridx = 1;
         c.gridy = 0;
@@ -224,16 +224,15 @@ public class BallTask extends JFrame implements ActionListener {
      */
     private void createFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //this.setExtendedState(JFrame.MAXIMIZED_BOTH);
         this.setBounds(150, 10, FRAME_WIDTH, FRAME_HEIGHT);
-        //this.setLayout(new GridBagLayout());
         this.setLayout(new BorderLayout());
-        //Container container = this.getContentPane();
+        Container container = this.getContentPane();
+        GridBagConstraints c = new GridBagConstraints();
         this.add(this.controlPanel, BorderLayout.SOUTH);
         this.add(this.viewer, BorderLayout.CENTER);
-        /*this.addControlPaneToFrame(container);
-        this.addViewerToFrame(container);
-        this.pack();*/
+        //this.addControlPaneToFrame(container,c);
+        //this.addViewerToFrame(container,c);
+        //this.pack();
     }
 
     /**
@@ -280,6 +279,7 @@ public class BallTask extends JFrame implements ActionListener {
             ball.setColor(Color.BLACK);
             ball.setInsideBlackHole(false);
             blackHole.setFull(false);
+            System.out.println("--------------BLACKHOLE VACÍO-------------------");
             ball.keepMoving();
             stadistics.addNewBallFromInside();
             notifyAll();
@@ -291,6 +291,7 @@ public class BallTask extends JFrame implements ActionListener {
                 stadistics.addNewBallFromOutside();
             }
             blackHole.setFull(true);
+            System.out.println("--------------BLACKHOLE LLENO-------------------");
             ball.setInsideBlackHole(true);
             ball.setColor(Color.GREEN);
             ball.keepMoving();
