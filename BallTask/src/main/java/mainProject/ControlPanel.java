@@ -112,14 +112,22 @@ public class ControlPanel extends JPanel implements Runnable {
     public void changeBoxState(String str) {
         switch (str) {
             case "Right side":
-                this.openedRightEdge = true;
-                this.openedLeftEdge = false;
-                this.leftSide.setSelected(false);
+                if(this.rightSide.isSelected()){
+                    this.openedRightEdge = true;
+                    this.openedLeftEdge = false;
+                    this.leftSide.setSelected(false);
+                }else{
+                    this.openedRightEdge = false;
+                }
                 break;
             case "Left side":
-                this.openedLeftEdge = true;
-                this.openedRightEdge = false;
-                this.rightSide.setSelected(false);
+                if(this.leftSide.isSelected()){
+                    this.openedLeftEdge = true;
+                    this.openedRightEdge = false;
+                    this.rightSide.setSelected(false);
+                }else{
+                    this.openedLeftEdge = false;
+                }
         }
     }
 
