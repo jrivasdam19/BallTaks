@@ -19,7 +19,6 @@ public class BallTask extends JFrame implements ActionListener {
     private Client client;
     private Channel channel;
     private ArrayList<BlackHole> blackHoleList = new ArrayList<>();
-    private ArrayList<Ball> ballsToSend = new ArrayList<>();
     private ArrayList<Ball> ballList = new ArrayList<>();
 
     private static final int FRAME_WIDTH = 1000;
@@ -52,7 +51,19 @@ public class BallTask extends JFrame implements ActionListener {
         String str = "";
         str = this.checkLimits(ball, this.viewer.getBounds());
         if (!str.equals("")) {
-            if (this.controlPanel.isOpenedLeftEdge()) {
+            if (this.controlPanel.isOpenedLeftEdge() || this.controlPanel.isOpenedRightEdge()) {
+                if (this.channel.isOk()) {
+                    ball.setExitWall(str);
+                    this.manageBallExit(ball);
+                }else{
+                    this.defineBounce(ball, str);
+                    collision = true;
+                }
+            } else {
+                this.defineBounce(ball, str);
+                collision = true;
+            }
+            /*if (this.controlPanel.isOpenedLeftEdge()) {
                 if (str.equals("Left")) {
                     ball.setExitWall(str);
                     this.manageBallExit(ball);
@@ -62,9 +73,7 @@ public class BallTask extends JFrame implements ActionListener {
                     ball.setExitWall(str);
                     this.manageBallExit(ball);
                 }
-            }
-            this.defineBounce(ball, str);
-            collision = true;
+            }*/
         } else {
             for (BlackHole blackHole : this.blackHoleList) {
                 str = this.checkLimits(ball, blackHole.getRectangle2D().getBounds());
@@ -110,18 +119,6 @@ public class BallTask extends JFrame implements ActionListener {
                 break;
         }
         return Ball.createReceivedBall(x, y, dx, dy);
-    }
-
-    /**
-     * Sends balls that were stopped and stored because of connection problems.
-     */
-    public synchronized void sendWaitingBalls() {
-        if (!this.ballsToSend.isEmpty()) {
-            for (int i = 0; i < this.ballsToSend.size(); i++) {
-                this.channel.sendBallFeatures(this.ballsToSend.get(i));
-            }
-            this.ballsToSend.clear();
-        }
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -226,8 +223,7 @@ public class BallTask extends JFrame implements ActionListener {
         this.stadistics.eraseBall();
         ball.setLiveBall(false);
         this.ballList.remove(ball);
-        this.ballsToSend.add(ball);
-        this.channel.sendAcknowledgment("Can I send you balls?");
+        this.channel.sendBallFeatures(ball);
     }
 
     /**

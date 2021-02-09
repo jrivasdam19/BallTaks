@@ -26,7 +26,7 @@ public class HealthConnection implements Runnable {
     private void tryFeedback() {
         try {
             this.acknowledgmentReceived = false;
-            this.channel.sendAcknowledgment("Can you hear me?");
+            this.channel.sendAcknowledgment();
             for (int i = 0; i < this.communicationAttempts && !this.acknowledgmentReceived; i++) {
                 Thread.sleep(this.DELAY);
             }
