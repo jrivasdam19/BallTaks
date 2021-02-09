@@ -2,7 +2,6 @@ package Communication;
 
 import mainProject.Ball;
 import mainProject.BallTask;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -31,6 +30,7 @@ public class Channel implements Runnable {
      */
     public synchronized void assignSocket(Socket socket) {
         if (!this.healthyChannel) {
+            this.ballTask.sendWaitingBalls();
             this.healthyChannel = true;
             this.socket = socket;
             this.channelThread = new Thread(this);
@@ -123,15 +123,15 @@ public class Channel implements Runnable {
             if (informationTaken == null) {
                 System.out.println("Mensaje nulo en receiveAnswer()");
                 this.healthyChannel = false;
-            } else if (StringUtils.equals(informationTaken.split(",")[0], "Sending ball")) {
+            } else if (informationTaken.split(",")[0].equals("Sending ball")) {
                 this.ballTask.generateNewBall(this.ballTask.manageBallEntry(informationTaken));
                 System.out.println("Bola regenerada");
-            } else if (StringUtils.equals(informationTaken, "Can you hear me?")) {
+            } else if (informationTaken.equals("Can you hear me?")) {
                 DataOutputStream outputStream = new DataOutputStream(this.socket.getOutputStream());
                 outputStream.writeUTF("Yes");
                 //outputStream.close();
                 System.out.println("Contestando al acknowledgment");
-            } else if (StringUtils.equals(informationTaken, "Yes")) {
+            } else if (informationTaken.equals("Yes")) {
                 System.out.println("Recibido Yes!");
                 this.healthConnection.setAcknowledgmentReceived(true);
             }

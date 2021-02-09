@@ -1,7 +1,5 @@
 package Communication;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,7 +7,7 @@ import java.net.Socket;
 
 public class Client implements Runnable {
 
-    private String ip = "192.168.1.27";
+    private String ip = "172.16.8.154";
     private int port = 8085;
     private Thread clientThread;
     private Socket clientSocket = null;
@@ -53,7 +51,7 @@ public class Client implements Runnable {
                 outFlow.writeUTF("BallTask");
                 //outFlow.close();
                 DataInputStream inFlow = new DataInputStream(this.clientSocket.getInputStream());
-                if (StringUtils.equals(inFlow.readUTF(), "Welcome!")) {
+                if (inFlow.readUTF().equals("Welcome!")) {
                     this.channel.assignSocket(this.clientSocket);
                     System.out.println("Conexión establecida");
                 }

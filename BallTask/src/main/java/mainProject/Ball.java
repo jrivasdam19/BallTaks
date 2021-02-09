@@ -15,7 +15,7 @@ public class Ball implements VisibleObject, Runnable {
     private int y = 5;
     private int dx = 1;
     private int dy = 1;
-    private static boolean paused;
+    private static boolean paused = false;
     private boolean insideBlackHole;
     private String exitWall;
 
@@ -65,10 +65,6 @@ public class Ball implements VisibleObject, Runnable {
 
     public void setColor(Color color) {
         this.color = color;
-    }
-
-    public Thread getBALL_THREAD() {
-        return BALL_THREAD;
     }
 
     public Ball() {
@@ -148,14 +144,13 @@ public class Ball implements VisibleObject, Runnable {
     public void paint(Graphics2D g) {
         g.setColor(this.color);
         g.fill(this.getShape(this.x, this.y, this.SIZE_X, this.SIZE_Y));
-        //g.fillOval(this.x, this.y, this.SIZE_X, this.SIZE_Y);
         g.setColor(Color.BLACK);
     }
 
     @Override
     public void run() {
         while (this.liveBall) {
-            if (!paused) ballTask.defineIntersect(this);
+            if (!Ball.paused) ballTask.defineIntersect(this);
             try {
                 this.BALL_THREAD.sleep(BallTask.DELAY);
             } catch (InterruptedException e) {

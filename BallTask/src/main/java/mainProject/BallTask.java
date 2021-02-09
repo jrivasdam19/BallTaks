@@ -3,7 +3,6 @@ package mainProject;
 import Communication.Channel;
 import Communication.Client;
 import Communication.Server;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,6 +19,7 @@ public class BallTask extends JFrame implements ActionListener {
     private Client client;
     private Channel channel;
     private ArrayList<BlackHole> blackHoleList = new ArrayList<>();
+    private ArrayList<Ball> ballsToSend = new ArrayList<>();
     private ArrayList<Ball> ballList = new ArrayList<>();
 
     private static final int FRAME_WIDTH = 1000;
@@ -51,7 +51,7 @@ public class BallTask extends JFrame implements ActionListener {
         boolean collision = false;
         String str = "";
         str = this.checkLimits(ball, this.viewer.getBounds());
-        if (!StringUtils.equals(str, "")) {
+        if (!str.equals("")) {
             if (this.controlPanel.isOpenedLeftEdge()) {
                 if (str.equals("Left")) {
                     ball.setExitWall(str);
@@ -106,10 +106,20 @@ public class BallTask extends JFrame implements ActionListener {
                 x = 0;
                 break;
             case "Left":
-                x = (int)this.viewer.getBounds().getMaxX();
+                x = (int) this.viewer.getBounds().getMaxX();
                 break;
         }
         return Ball.createReceivedBall(x, y, dx, dy);
+    }
+
+    /**
+     * Sends balls that were stopped and stored because of connection problems.
+     */
+    public void sendWaitingBalls() {
+        if(!this.ballsToSend.isEmpty()){
+            for (Ball ball : this.ballsToSend) this.channel.sendBallFeatures(ball);
+            this.ballsToSend.clear();
+        }
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -117,7 +127,7 @@ public class BallTask extends JFrame implements ActionListener {
     /**
      * Checks in which of rectangle limits intersect happens.
      *
-     * @param ball Ball class instance.
+     * @param ball   Ball class instance.
      * @param limits Square shape object bounds.
      * @return String with the intersect.
      */
@@ -127,21 +137,18 @@ public class BallTask extends JFrame implements ActionListener {
             if (ball.getY() + ball.getDy() > limits.getMinY() && ball.getY() + ball.getDy() < limits.getMaxY()) {
                 str = "Left";
             }
-        }
-        else if (ball.getX() + ball.getDx() == limits.getMaxX()) {
+        } else if (ball.getX() + ball.getDx() == limits.getMaxX()) {
             if (ball.getY() + ball.getDy() > limits.getMinY() && ball.getY() + ball.getDy() < limits.getMaxY()) {
                 str = "Right";
                 System.out.println("Ball Right side " + (ball.getX() + ball.getDx()));
                 System.out.println("Viewer width: " + limits.getMaxX());
                 System.out.println("Viewer bounds+getMaxX" + this.viewer.getBounds().getMaxX());
             }
-        }
-        else if (ball.getY() + ball.getDy() == limits.getMinY()) {
+        } else if (ball.getY() + ball.getDy() == limits.getMinY()) {
             if (ball.getX() + ball.getDx() > limits.getMinX() && ball.getX() + ball.getDx() < limits.getMaxX()) {
                 str = "V";
             }
-        }
-        else if (ball.getY() + ball.getDy() == limits.getMaxY()) {
+        } else if (ball.getY() + ball.getDy() == limits.getMaxY()) {
             if (ball.getX() + ball.getDx() > limits.getMinX() && ball.getX() + ball.getDx() < limits.getMaxX()) {
                 str = "V";
             }
@@ -192,13 +199,13 @@ public class BallTask extends JFrame implements ActionListener {
     /**
      * Lets user inserting ip direction and port number to connect with other players.
      */
-    private void insertData(){
-        String ip=JOptionPane.showInputDialog("Insert your friend IP!");
-        int port=Integer.parseInt(JOptionPane.showInputDialog("Insert the number of the port"));
+    private void insertData() {
+        String ip = JOptionPane.showInputDialog("Insert your friend IP!");
+        int port = Integer.parseInt(JOptionPane.showInputDialog("Insert the number of the port"));
         this.client.setIp(ip);
         this.client.setPort(port);
         this.server.setPort(port);
-        this.controlPanel.refreshJLabelText(ip,port);
+        this.controlPanel.refreshJLabelText(ip, port);
     }
 
     /**
@@ -217,16 +224,20 @@ public class BallTask extends JFrame implements ActionListener {
      * @param ball
      */
     private void manageBallExit(Ball ball) {
-        this.channel.sendBallFeatures(ball);
         this.stadistics.eraseBall();
         ball.setLiveBall(false);
         this.ballList.remove(ball);
+        if (this.channel.isOk()) {
+            this.channel.sendBallFeatures(ball);
+        } else {
+            this.ballsToSend.add(ball);
+        }
     }
 
     /**
      * Manages ball intersect with BlackHole object.
      *
-     * @param ball Ball class instance.
+     * @param ball      Ball class instance.
      * @param blackHole BlackHole class instance.
      */
     private synchronized void manageBlackHoleIntersect(Ball ball, BlackHole blackHole) {
