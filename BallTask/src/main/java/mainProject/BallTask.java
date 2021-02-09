@@ -71,17 +71,6 @@ public class BallTask extends JFrame implements ActionListener {
                 this.defineBounce(ball, str);
                 collision = true;
             }
-            /*if (this.controlPanel.isOpenedLeftEdge()) {
-                if (str.equals("Left")) {
-                    ball.setExitWall(str);
-                    this.manageBallExit(ball);
-                }
-            } else if (this.controlPanel.isOpenedRightEdge()) {
-                if (str.equals("Right")) {
-                    ball.setExitWall(str);
-                    this.manageBallExit(ball);
-                }
-            }*/
         } else {
             for (BlackHole blackHole : this.blackHoleList) {
                 str = this.checkLimits(ball, blackHole.getRectangle2D().getBounds());

@@ -21,6 +21,11 @@ public class IdentifyConnection implements Runnable {
         t.start();
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Identifies if the user is a BallTask user.
+     */
     private void identifyBallTask() {
         try {
             DataInputStream inputStream = new DataInputStream(this.clientSocket.getInputStream());
@@ -39,6 +44,8 @@ public class IdentifyConnection implements Runnable {
             e.printStackTrace();
         }
     }
+
+    //------------------------------------------------------------------------------------------------------------------
 
     @Override
     public void run() {

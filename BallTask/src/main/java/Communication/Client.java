@@ -15,14 +15,6 @@ public class Client implements Runnable {
     private boolean running;
     private Channel channel;
 
-    public String getIp() {
-        return ip;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
     public void setIp(String ip) {
         this.ip = ip;
     }
@@ -49,7 +41,6 @@ public class Client implements Runnable {
                 this.clientSocket = new Socket(this.ip, this.port);
                 DataOutputStream outFlow = new DataOutputStream(this.clientSocket.getOutputStream());
                 outFlow.writeUTF("BallTask");
-                //outFlow.close();
                 DataInputStream inFlow = new DataInputStream(this.clientSocket.getInputStream());
                 if (inFlow.readUTF().equals("Welcome!")) {
                     this.channel.assignSocket(this.clientSocket);
@@ -74,7 +65,6 @@ public class Client implements Runnable {
                 System.out.println("Problema en el run de client");
                 e.printStackTrace();
             }
-
         }
     }
 }

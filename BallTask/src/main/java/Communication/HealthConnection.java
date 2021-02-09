@@ -5,7 +5,7 @@ public class HealthConnection implements Runnable {
     private Channel channel;
     private boolean acknowledgmentReceived;
     private int communicationAttempts = 5;
-    private final int DELAY = 1000;
+    private final int DELAY = 300;
 
     public void setAcknowledgmentReceived(boolean acknowledgmentReceived) {
         this.acknowledgmentReceived = acknowledgmentReceived;

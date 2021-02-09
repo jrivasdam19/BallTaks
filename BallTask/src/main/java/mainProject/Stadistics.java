@@ -47,9 +47,6 @@ public class Stadistics {
         this.calculateTotal();
     }
 
-    /**
-     * Adds one ball to Balls Outside Stadistics field.
-     */
     public void addNewBallFromInside() {
         this.ballsInside--;
         this.ballsOutside++;
@@ -64,6 +61,7 @@ public class Stadistics {
         this.ballsWaiting--;
         this.ballsInside++;
     }
+
     public void addNewBallWaiting(){
         this.ballsOutside--;
         this.ballsWaiting++;

@@ -177,6 +177,9 @@ public class ControlPanel extends JPanel implements Runnable {
         this.addComponentsToPanel();
     }
 
+    /**
+     * Manages creation of ControlPanel JPanel.
+     */
     private void createTable() {
         this.statsTable = new JTable(4, 2);
         this.statsTable.setValueAt("Balls Outside", 0, 0);
