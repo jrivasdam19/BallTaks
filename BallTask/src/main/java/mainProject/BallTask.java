@@ -51,15 +51,23 @@ public class BallTask extends JFrame implements ActionListener {
         String str = "";
         str = this.checkLimits(ball, this.viewer.getBounds());
         if (!str.equals("")) {
-            if (this.controlPanel.isOpenedLeftEdge() || this.controlPanel.isOpenedRightEdge()) {
-                if (this.channel.isOk()) {
+            if (str.equals("Left")) {
+                if (this.controlPanel.isOpenedLeftEdge() && this.channel.isOk()) {
                     ball.setExitWall(str);
                     this.manageBallExit(ball);
-                }else{
+                } else {
                     this.defineBounce(ball, str);
                     collision = true;
                 }
-            } else {
+            } else if (str.equals("Right")) {
+                if (this.controlPanel.isOpenedRightEdge() && this.channel.isOk()) {
+                    ball.setExitWall(str);
+                    this.manageBallExit(ball);
+                } else {
+                    this.defineBounce(ball, str);
+                    collision = true;
+                }
+            } else if (str.equals("V")) {
                 this.defineBounce(ball, str);
                 collision = true;
             }
