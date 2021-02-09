@@ -30,7 +30,6 @@ public class Channel implements Runnable {
      */
     public synchronized void assignSocket(Socket socket) {
         if (!this.healthyChannel) {
-            this.ballTask.sendWaitingBalls();
             this.healthyChannel = true;
             this.socket = socket;
             this.channelThread = new Thread(this);
@@ -66,10 +65,11 @@ public class Channel implements Runnable {
     /**
      * Send an inputStream in order to verify if connection is OK.
      */
-    public void sendAcknowledgment() {
+    public void sendAcknowledgment(String message) {
         try {
             DataOutputStream outputStream = new DataOutputStream(this.socket.getOutputStream());
-            outputStream.writeUTF("Can you hear me?");
+            if (message.equals("Can you hear me?")) outputStream.writeUTF(message);
+            if (message.equals("Can I send you balls?")) outputStream.writeUTF(message);
             //outputStream.close();
             System.out.println("Acknowledgment enviado!");
         } catch (IOException e) {
@@ -131,9 +131,15 @@ public class Channel implements Runnable {
                 outputStream.writeUTF("Yes");
                 //outputStream.close();
                 System.out.println("Contestando al acknowledgment");
+            } else if (informationTaken.equals("Can I send you balls?")) {
+                DataOutputStream outputStream = new DataOutputStream(this.socket.getOutputStream());
+                outputStream.writeUTF("Ready");
             } else if (informationTaken.equals("Yes")) {
                 System.out.println("Recibido Yes!");
                 this.healthConnection.setAcknowledgmentReceived(true);
+            } else if (informationTaken.equals("Ready")) {
+                this.ballTask.sendWaitingBalls();
+                System.out.println("Recibido Ready");
             }
             //inputStream.close();
         } catch (IOException e) {

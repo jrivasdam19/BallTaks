@@ -7,7 +7,7 @@ import java.net.Socket;
 
 public class Client implements Runnable {
 
-    private String ip = "172.16.8.154";
+    private String ip = "172.16.201.16";
     private int port = 8085;
     private Thread clientThread;
     private Socket clientSocket = null;

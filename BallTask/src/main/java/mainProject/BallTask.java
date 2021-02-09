@@ -117,7 +117,7 @@ public class BallTask extends JFrame implements ActionListener {
      */
     public void sendWaitingBalls() {
         if(!this.ballsToSend.isEmpty()){
-            for (Ball ball : this.ballsToSend) this.channel.sendBallFeatures(ball);
+            for (int i = 0; i < this.ballsToSend.size(); i++) this.channel.sendBallFeatures(this.ballsToSend.get(i) );
             this.ballsToSend.clear();
         }
     }
@@ -140,9 +140,6 @@ public class BallTask extends JFrame implements ActionListener {
         } else if (ball.getX() + ball.getDx() == limits.getMaxX()) {
             if (ball.getY() + ball.getDy() > limits.getMinY() && ball.getY() + ball.getDy() < limits.getMaxY()) {
                 str = "Right";
-                System.out.println("Ball Right side " + (ball.getX() + ball.getDx()));
-                System.out.println("Viewer width: " + limits.getMaxX());
-                System.out.println("Viewer bounds+getMaxX" + this.viewer.getBounds().getMaxX());
             }
         } else if (ball.getY() + ball.getDy() == limits.getMinY()) {
             if (ball.getX() + ball.getDx() > limits.getMinX() && ball.getX() + ball.getDx() < limits.getMaxX()) {
@@ -224,14 +221,11 @@ public class BallTask extends JFrame implements ActionListener {
      * @param ball
      */
     private void manageBallExit(Ball ball) {
+        this.ballsToSend.add(ball);
         this.stadistics.eraseBall();
         ball.setLiveBall(false);
         this.ballList.remove(ball);
-        if (this.channel.isOk()) {
-            this.channel.sendBallFeatures(ball);
-        } else {
-            this.ballsToSend.add(ball);
-        }
+        this.channel.sendAcknowledgment("Can I send you balls?");
     }
 
     /**
