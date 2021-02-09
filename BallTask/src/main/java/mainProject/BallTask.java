@@ -53,15 +53,13 @@ public class BallTask extends JFrame implements ActionListener {
         str = this.checkLimits(ball, this.viewer.getBounds());
         if (!StringUtils.equals(str, "")) {
             if (this.controlPanel.isOpenedLeftEdge()) {
-                if (StringUtils.equals(str, "Left")) {
+                if (str.equals("Left")) {
                     ball.setExitWall(str);
-                    System.out.println("enviando la bola por la izquierda");
                     this.manageBallExit(ball);
                 }
             } else if (this.controlPanel.isOpenedRightEdge()) {
-                if (StringUtils.equals(str, "Right")) {
+                if (str.equals("Right")) {
                     ball.setExitWall(str);
-                    System.out.println("enviando la bola por la derecha");
                     this.manageBallExit(ball);
                 }
             }
@@ -99,16 +97,16 @@ public class BallTask extends JFrame implements ActionListener {
      * @return New Ball instance with preset features.
      */
     public Ball manageBallEntry(String informationTaken) {
-        double x = Double.parseDouble(informationTaken.split(",")[1]);
-        double y = Double.parseDouble(informationTaken.split(",")[2]);
-        double dx = Double.parseDouble(informationTaken.split(",")[3]);
-        double dy = Double.parseDouble(informationTaken.split(",")[4]);
+        int x = Integer.parseInt(informationTaken.split(",")[1]);
+        int y = Integer.parseInt(informationTaken.split(",")[2]);
+        int dx = Integer.parseInt(informationTaken.split(",")[3]);
+        int dy = Integer.parseInt(informationTaken.split(",")[4]);
         switch (informationTaken.split(",")[5]) {
             case "Right":
                 x = 0;
                 break;
             case "Left":
-                x = this.viewer.getWidth();
+                x = (int)this.viewer.getBounds().getMaxX();
                 break;
         }
         return Ball.createReceivedBall(x, y, dx, dy);
@@ -117,122 +115,58 @@ public class BallTask extends JFrame implements ActionListener {
     //------------------------------------------------------------------------------------------------------------------
 
     /**
-     * Passes ball instance to Channel class in order to be sent out. Also remove this instance from ballList and let
-     * Thread execution finish.
-     *
-     * @param ball
-     */
-    private void manageBallExit(Ball ball) {
-        this.channel.sendBallFeatures(ball);
-        this.stadistics.eraseBall();
-        ball.setLiveBall(false);
-        this.ballList.remove(ball);
-    }
-
-    /**
-     * Let all Threads execution finish.
-     */
-    private void killThreads() {
-        for (Ball ball : this.ballList) {
-            ball.setLiveBall(false);
-        }
-    }
-
-    /**
-     * Defines gridBagLayout constraints for ControlPanel to be added to Frame.
-     *
-     * @param container
-     */
-    private void addControlPaneToFrame(Container container,GridBagConstraints c) {
-        //GridBagConstraints c = new GridBagConstraints();
-
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        c.fill = GridBagConstraints.VERTICAL;
-        //c.insets=new Insets(0,0,0,10);
-        container.add(this.controlPanel, c);
-    }
-
-    /**
-     * Defines gridBagLayout constraints for Viewer to be added to Frame.
-     *
-     * @param container
-     */
-    private void addViewerToFrame(Container container,GridBagConstraints c) {
-       // GridBagConstraints c = new GridBagConstraints();
-
-        c.gridx = 1;
-        c.gridy = 0;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.NORTHWEST;
-        c.gridwidth = 10;
-        c.gridheight = 10;
-        container.add(this.viewer, c);
-    }
-
-    /**
      * Checks in which of rectangle limits intersect happens.
      *
-     * @param ball
+     * @param ball Ball class instance.
      * @param limits Square shape object bounds.
      * @return String with the intersect.
      */
     private String checkLimits(Ball ball, Rectangle limits) {
         String str = "";
-        //borde izquierdo
-        if (ball.getX() + 1 == limits.getMinX()) {
-            if (ball.getY() + 1 > limits.getMinY() && ball.getY() + 1 < limits.getMaxY()) {
+        if (ball.getX() + ball.getDx() == limits.getMinX()) {
+            if (ball.getY() + ball.getDy() > limits.getMinY() && ball.getY() + ball.getDy() < limits.getMaxY()) {
                 str = "Left";
             }
         }
-        //borde derecho
-        else if (ball.getX() + 1 == limits.getMaxX()) {
-            if (ball.getY() + 1 > limits.getMinY() && ball.getY() + 1 < limits.getMaxY()) {
+        else if (ball.getX() + ball.getDx() == limits.getMaxX()) {
+            if (ball.getY() + ball.getDy() > limits.getMinY() && ball.getY() + ball.getDy() < limits.getMaxY()) {
                 str = "Right";
+                System.out.println("Ball Right side " + (ball.getX() + ball.getDx()));
+                System.out.println("Viewer width: " + limits.getMaxX());
+                System.out.println("Viewer bounds+getMaxX" + this.viewer.getBounds().getMaxX());
             }
         }
-        //borde superior
-        else if (ball.getY() + 1 == limits.getMinY()) {
-            if (ball.getX() + 1 > limits.getMinX() && ball.getX() + 1 < limits.getMaxX()) {
+        else if (ball.getY() + ball.getDy() == limits.getMinY()) {
+            if (ball.getX() + ball.getDx() > limits.getMinX() && ball.getX() + ball.getDx() < limits.getMaxX()) {
                 str = "V";
             }
         }
-        //borde inferior
-        else if (ball.getY() + 1 == limits.getMaxY()) {
-            if (ball.getX() + 1 > limits.getMinX() && ball.getX() + 1 < limits.getMaxX()) {
+        else if (ball.getY() + ball.getDy() == limits.getMaxY()) {
+            if (ball.getX() + ball.getDx() > limits.getMinX() && ball.getX() + ball.getDx() < limits.getMaxX()) {
                 str = "V";
             }
-        }
-        //vértices
-        else if ((ball.getY() + 1 == limits.getMaxY() && ball.getX() + 1 == limits.getMaxX()) ||
-                (ball.getY() + 1 == limits.getMinY() && ball.getX() + 1 == limits.getMinX()) ||
-                (ball.getY() + 1 == limits.getMinY() && ball.getX() + 1 == limits.getMaxX()) ||
-                (ball.getY() + 1 == limits.getMaxY() && ball.getX() + 1 == limits.getMinX())) {
-            str = "D";
         }
         return str;
     }
 
     /**
-     * Manages the creation of BallTask Frame
+     * Set full BlackHoles attribute to false.
+     */
+    private void clearOutBlackHoles() {
+        for (BlackHole blackHole : this.blackHoleList) {
+            blackHole.setFull(false);
+        }
+    }
+
+    /**
+     * Manages the creation of BallTask JFrame.
      */
     private void createFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setBounds(150, 10, FRAME_WIDTH, FRAME_HEIGHT);
         this.setLayout(new BorderLayout());
-        Container container = this.getContentPane();
-        GridBagConstraints c = new GridBagConstraints();
         this.add(this.controlPanel, BorderLayout.SOUTH);
         this.add(this.viewer, BorderLayout.CENTER);
-        //this.addControlPaneToFrame(container,c);
-        //this.addViewerToFrame(container,c);
-        //this.pack();
     }
 
     /**
@@ -252,17 +186,48 @@ public class BallTask extends JFrame implements ActionListener {
             case "V":
                 ball.bounceVertically();
                 break;
-            case "D":
-                ball.bounceDiagonally();
-                break;
         }
+    }
+
+    /**
+     * Lets user inserting ip direction and port number to connect with other players.
+     */
+    private void insertData(){
+        String ip=JOptionPane.showInputDialog("Insert your friend IP!");
+        int port=Integer.parseInt(JOptionPane.showInputDialog("Insert the number of the port"));
+        this.client.setIp(ip);
+        this.client.setPort(port);
+        this.server.setPort(port);
+        this.controlPanel.refreshJLabelText(ip,port);
+    }
+
+    /**
+     * Let all balls Thread execution finish.
+     */
+    private void killBallsThread() {
+        for (Ball ball : this.ballList) {
+            ball.setLiveBall(false);
+        }
+    }
+
+    /**
+     * Passes ball instance to Channel class in order to be sent out. Also remove this instance from ballList and let
+     * Thread execution finish.
+     *
+     * @param ball
+     */
+    private void manageBallExit(Ball ball) {
+        this.channel.sendBallFeatures(ball);
+        this.stadistics.eraseBall();
+        ball.setLiveBall(false);
+        this.ballList.remove(ball);
     }
 
     /**
      * Manages ball intersect with BlackHole object.
      *
-     * @param ball
-     * @param blackHole
+     * @param ball Ball class instance.
+     * @param blackHole BlackHole class instance.
      */
     private synchronized void manageBlackHoleIntersect(Ball ball, BlackHole blackHole) {
         if (blackHole.isFull() && !ball.isInsideBlackHole()) {
@@ -279,11 +244,9 @@ public class BallTask extends JFrame implements ActionListener {
             ball.setColor(Color.BLACK);
             ball.setInsideBlackHole(false);
             blackHole.setFull(false);
-            System.out.println("--------------BLACKHOLE VACÍO-------------------");
             ball.keepMoving();
             stadistics.addNewBallFromInside();
             notifyAll();
-
         } else if (!blackHole.isFull() && !ball.isInsideBlackHole()) {
             if (ball.getColor() == Color.RED) {
                 stadistics.addNewBallFromWaiting();
@@ -291,44 +254,15 @@ public class BallTask extends JFrame implements ActionListener {
                 stadistics.addNewBallFromOutside();
             }
             blackHole.setFull(true);
-            System.out.println("--------------BLACKHOLE LLENO-------------------");
             ball.setInsideBlackHole(true);
             ball.setColor(Color.GREEN);
             ball.keepMoving();
         }
     }
 
-    /**
-     * Set full BlackHoles attribute to false.
-     */
-    private void clearOutBlackHoles() {
-        for (BlackHole blackHole : this.blackHoleList) {
-            blackHole.setFull(false);
-        }
-    }
-
-    private void interruptThreads() {
-        for (Ball ball : this.ballList) {
-            ball.getBALL_THREAD().interrupt();
-        }
-    }
-
-    private synchronized void stopThreads() {
-        for (Ball ball : this.ballList) {
-            if (!ball.getBALL_THREAD().isInterrupted()) {
-                try {
-                    ball.getBALL_THREAD().wait();
-                } catch (InterruptedException interruptedException) {
-                    interruptedException.printStackTrace();
-                }
-            }
-        }
-    }
-
     //------------------------------------------------------------------------------------------------------------------
 
     public static void main(String[] args) {
-
         BallTask ballTask = new BallTask();
         ballTask.setVisible(true);
     }
@@ -343,24 +277,26 @@ public class BallTask extends JFrame implements ActionListener {
                 this.generateNewBall(new Ball());
                 break;
             case "New Game":
-                this.interruptThreads();
+                this.killBallsThread();
                 this.ballList.clear();
-                this.killThreads();
                 this.stadistics.eraseBalls();
                 this.clearOutBlackHoles();
                 break;
             case "Resume":
                 this.controlPanel.enableButton(str);
-                notifyAll();
+                Ball.setPaused(false);
                 break;
             case "Stop":
                 this.controlPanel.enableButton(str);
-                this.stopThreads();
+                Ball.setPaused(true);
             case "Right side":
                 this.controlPanel.changeBoxState(str);
                 break;
             case "Left side":
                 this.controlPanel.changeBoxState(str);
+                break;
+            case "Change IP & Port":
+                this.insertData();
                 break;
             default:
                 System.out.println("Not Handled ActionListener in " + e);

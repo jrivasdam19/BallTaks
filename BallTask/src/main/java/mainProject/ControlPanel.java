@@ -6,19 +6,14 @@ import java.util.ArrayList;
 
 public class ControlPanel extends JPanel implements Runnable {
 
-    private JButton addBall, newGame, resume, stop;
-    private JLabel neighborIp;
-    private JTextField port;
+    private JButton addBall, newGame, resume, stop, info;
+    private JLabel neighborIp, port;
     private boolean openedLeftEdge, openedRightEdge;
     private JCheckBox leftSide, rightSide;
     private JTable statsTable;
     private ArrayList<Ball> ballList;
     private Stadistics stadistics;
     private BallTask ballTask;
-
-    public JLabel getNeighborIp() {
-        return neighborIp;
-    }
 
     private Thread controlThread;
     private final int DELAY = 4;
@@ -27,20 +22,8 @@ public class ControlPanel extends JPanel implements Runnable {
         return openedLeftEdge;
     }
 
-    public void setOpenedLeftEdge(boolean openedLeftEdge) {
-        this.openedLeftEdge = openedLeftEdge;
-    }
-
     public boolean isOpenedRightEdge() {
         return openedRightEdge;
-    }
-
-    public void setOpenedRightEdge(boolean openedRightEdge) {
-        this.openedRightEdge = openedRightEdge;
-    }
-
-    public JTextField getPort() {
-        return port;
     }
 
     public ControlPanel(ArrayList<Ball> ballList, Stadistics stadistics, BallTask ballTask) {
@@ -57,8 +40,20 @@ public class ControlPanel extends JPanel implements Runnable {
     }
     //------------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Updates JLabels text.
+     * @param ip Current ip direction given by user.
+     * @param port Current port number given by user.
+     */
+    public void refreshJLabelText(String ip, int port){
+        this.neighborIp.setText(ip);
+        this.port.setText(String.valueOf(port));
+    }
     //------------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Adds components by defining GridBagLayout constraints.
+     */
     private void addComponentsToPanel() {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -101,31 +96,19 @@ public class ControlPanel extends JPanel implements Runnable {
 
         c.gridy = 1;
         this.add(this.rightSide, c);
+
+        c.gridx=21;
+        c.gridy=0;
+        c.gridwidth=2;
+        c.gridheight=3;
+        c.fill=GridBagConstraints.BOTH;
+        this.add(this.info,c);
     }
 
-    private void createButtons() {
-        this.addBall = new JButton("Add New Ball");
-        this.addBall.addActionListener(this.ballTask);
-        this.newGame = new JButton("New Game");
-        this.newGame.addActionListener(this.ballTask);
-        this.resume = new JButton("Resume");
-        this.resume.addActionListener(this.ballTask);
-        this.stop = new JButton("Stop");
-        this.stop.addActionListener(this.ballTask);
-    }
-
-    private void createCheckBoxes() {
-        this.leftSide = new JCheckBox("Left side");
-        this.leftSide.addActionListener(this.ballTask);
-        this.rightSide = new JCheckBox("Right side");
-        this.rightSide.addActionListener(this.ballTask);
-    }
-
-    private void createTextFields() {
-        this.neighborIp = new JLabel("Add your neighbor IP here!");
-        this.port = new JTextField("Add your rendezvous port here!");
-    }
-
+    /**
+     * Switchs selected state between checkboxes in order to avoid having both walls open.
+     * @param str JCheckBox name.
+     */
     public void changeBoxState(String str) {
         switch (str) {
             case "Right side":
@@ -140,6 +123,64 @@ public class ControlPanel extends JPanel implements Runnable {
         }
     }
 
+    /**
+     * Manages creation of ControlPanel JButtons.
+     */
+    private void createButtons() {
+        this.addBall = new JButton("Add New Ball");
+        this.addBall.addActionListener(this.ballTask);
+        this.newGame = new JButton("New Game");
+        this.newGame.addActionListener(this.ballTask);
+        this.resume = new JButton("Resume");
+        this.resume.addActionListener(this.ballTask);
+        this.resume.setEnabled(false);
+        this.stop = new JButton("Stop");
+        this.stop.addActionListener(this.ballTask);
+        this.info=new JButton("Change IP & Port");
+        this.info.addActionListener(this.ballTask);
+    }
+
+    /**
+     * Manages creation of ControlPanel JCheckboxes.
+     */
+    private void createCheckBoxes() {
+        this.leftSide = new JCheckBox("Left side");
+        this.leftSide.addActionListener(this.ballTask);
+        this.rightSide = new JCheckBox("Right side");
+        this.rightSide.addActionListener(this.ballTask);
+    }
+
+    /**
+     * Manages creation of ControlPanel JTable.
+     */
+    private void createJLabels() {
+        this.neighborIp = new JLabel("Neighbor IP");
+        this.port = new JLabel("Common Port");
+    }
+
+    /**
+     * Manages creation of ControlPanel JPanel.
+     */
+    private void createPanel() {
+        this.createTable();
+        this.createCheckBoxes();
+        this.createJLabels();
+        this.createButtons();
+        this.addComponentsToPanel();
+    }
+
+    private void createTable() {
+        this.statsTable = new JTable(4, 2);
+        this.statsTable.setValueAt("Balls Outside", 0, 0);
+        this.statsTable.setValueAt("Balls Inside", 1, 0);
+        this.statsTable.setValueAt("Balls Waiting", 2, 0);
+        this.statsTable.setValueAt("Total Balls", 3, 0);
+    }
+
+    /**
+     * Switchs button enable state between buttons in order to prevent inconsistencies.
+     * @param str JButton name.
+     */
     public void enableButton(String str) {
         switch (str) {
             case "Resume":
@@ -153,22 +194,10 @@ public class ControlPanel extends JPanel implements Runnable {
         }
     }
 
-    private void createPanel() {
-        this.createTable();
-        this.createCheckBoxes();
-        this.createTextFields();
-        this.createButtons();
-        this.addComponentsToPanel();
-    }
-
-    private void createTable() {
-        this.statsTable = new JTable(4, 2);
-        this.statsTable.setValueAt("Balls Outside", 0, 0);
-        this.statsTable.setValueAt("Balls Inside", 1, 0);
-        this.statsTable.setValueAt("Balls Waiting", 2, 0);
-        this.statsTable.setValueAt("Total Balls", 3, 0);
-    }
-
+    /**
+     * Updates JTable data.
+     * @param stadistics Stadistics class instance.
+     */
     private void refreshJTable(Stadistics stadistics) {
         this.statsTable.setValueAt(stadistics.getBallsOutside(), 0, 1);
         this.statsTable.setValueAt(stadistics.getBallsInside(), 1, 1);

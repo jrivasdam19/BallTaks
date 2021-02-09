@@ -7,6 +7,9 @@ public class BlackHole implements VisibleObject {
 
     private final Rectangle2D.Double rectangle2D;
     private boolean isFull;
+    private Rectangle rectangle;
+    private int width;
+    private int height;
 
     public boolean isFull() {
         return isFull;
@@ -20,9 +23,9 @@ public class BlackHole implements VisibleObject {
         return rectangle2D;
     }
 
-    public BlackHole(double x, double y, double width, double height) {
-        this.isFull=false;
-        this.rectangle2D= new Rectangle2D.Double(x, y, width, height);
+    public BlackHole(int x, int y, int width, int height) {
+        this.isFull = false;
+        this.rectangle2D = new Rectangle2D.Double(x, y, width, height);
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -31,4 +34,5 @@ public class BlackHole implements VisibleObject {
     public void paint(Graphics2D g) {
         g.draw(this.rectangle2D);
     }
+
 }

@@ -13,6 +13,10 @@ public class Server implements Runnable {
     private ServerSocket serverSocket = null;
     private Socket clientSocket;
 
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     public Server(Channel channel) {
         this.channel = channel;
         this.running = true;

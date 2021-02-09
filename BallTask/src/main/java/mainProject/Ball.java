@@ -11,10 +11,11 @@ public class Ball implements VisibleObject, Runnable {
     private final int SIZE_Y = 15;
     private Color color = Color.BLACK;
     public boolean liveBall;
-    private double x = 5;
-    private double y = 5;
-    private double dx = 1;
-    private double dy = 1;
+    private int x = 5;
+    private int y = 5;
+    private int dx = 1;
+    private int dy = 1;
+    private static boolean paused;
     private boolean insideBlackHole;
     private String exitWall;
 
@@ -24,6 +25,10 @@ public class Ball implements VisibleObject, Runnable {
 
     public void setExitWall(String exitWall) {
         this.exitWall = exitWall;
+    }
+
+    public static void setPaused(boolean paused) {
+        Ball.paused = paused;
     }
 
     public void setLiveBall(boolean liveBall) {
@@ -42,19 +47,19 @@ public class Ball implements VisibleObject, Runnable {
         this.insideBlackHole = insideBlackHole;
     }
 
-    public double getX() {
+    public int getX() {
         return x;
     }
 
-    public double getY() {
+    public int getY() {
         return y;
     }
 
-    public double getDx() {
+    public int getDx() {
         return dx;
     }
 
-    public double getDy() {
+    public int getDy() {
         return dy;
     }
 
@@ -68,20 +73,12 @@ public class Ball implements VisibleObject, Runnable {
 
     public Ball() {
         this.insideBlackHole = false;
+        this.paused = false;
         this.liveBall = true;
         this.BALL_THREAD = new Thread(this);
     }
 
     //------------------------------------------------------------------------------------------------------------------
-
-    /**
-     * Defines a diagonally bounce by switching vertical and horizontal ball coordinates.
-     */
-    public void bounceDiagonally() {
-        this.dy = -(this.dy);
-        this.dx = -(this.dx);
-        this.keepMoving();
-    }
 
     /**
      * Defines an horizontal bounce by switching horizontal ball coordinate.
@@ -106,7 +103,7 @@ public class Ball implements VisibleObject, Runnable {
      * @param y Vertical coordinate.
      * @return New Ball instance.
      */
-    public static Ball createReceivedBall(double x, double y, double dx, double dy) {
+    public static Ball createReceivedBall(int x, int y, int dx, int dy) {
         Ball ball = new Ball();
         ball.x = x;
         ball.y = y;
@@ -141,7 +138,7 @@ public class Ball implements VisibleObject, Runnable {
      * @param height Ball expected height.
      * @return Ellipse.
      */
-    private Ellipse2D.Double getShape(double x, double y, double width, double height) {
+    private Ellipse2D.Double getShape(int x, int y, int width, int height) {
         return new Ellipse2D.Double(x, y, width, height);
     }
 
@@ -151,13 +148,14 @@ public class Ball implements VisibleObject, Runnable {
     public void paint(Graphics2D g) {
         g.setColor(this.color);
         g.fill(this.getShape(this.x, this.y, this.SIZE_X, this.SIZE_Y));
+        //g.fillOval(this.x, this.y, this.SIZE_X, this.SIZE_Y);
         g.setColor(Color.BLACK);
     }
 
     @Override
     public void run() {
         while (this.liveBall) {
-            ballTask.defineIntersect(this);
+            if (!paused) ballTask.defineIntersect(this);
             try {
                 this.BALL_THREAD.sleep(BallTask.DELAY);
             } catch (InterruptedException e) {

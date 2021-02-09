@@ -17,6 +17,22 @@ public class Client implements Runnable {
     private boolean running;
     private Channel channel;
 
+    public String getIp() {
+        return ip;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     public Client(Channel channel) {
         this.running = true;
         this.channel = channel;
