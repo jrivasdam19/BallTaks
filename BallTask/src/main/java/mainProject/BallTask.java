@@ -115,9 +115,11 @@ public class BallTask extends JFrame implements ActionListener {
     /**
      * Sends balls that were stopped and stored because of connection problems.
      */
-    public void sendWaitingBalls() {
-        if(!this.ballsToSend.isEmpty()){
-            for (int i = 0; i < this.ballsToSend.size(); i++) this.channel.sendBallFeatures(this.ballsToSend.get(i) );
+    public synchronized void sendWaitingBalls() {
+        if (!this.ballsToSend.isEmpty()) {
+            for (int i = 0; i < this.ballsToSend.size(); i++) {
+                this.channel.sendBallFeatures(this.ballsToSend.get(i));
+            }
             this.ballsToSend.clear();
         }
     }
@@ -221,10 +223,10 @@ public class BallTask extends JFrame implements ActionListener {
      * @param ball
      */
     private void manageBallExit(Ball ball) {
-        this.ballsToSend.add(ball);
         this.stadistics.eraseBall();
         ball.setLiveBall(false);
         this.ballList.remove(ball);
+        this.ballsToSend.add(ball);
         this.channel.sendAcknowledgment("Can I send you balls?");
     }
 
